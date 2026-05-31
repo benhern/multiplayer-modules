@@ -17,9 +17,11 @@ let playercount = 0;
 io.on("connection", (socket) => {
 
     console.log("Player connected");
+    //console.log(socket.handshake.auth.player_data)
+    playercount++;
     // Send current count to new player
     socket.emit("updateCount", count);
-    socket.emit("updatePlayerCount",);
+    socket.emit("updatePlayerCount", playercount);
 
     // When player clicks increase button
     socket.on("increaseCount", () => {
@@ -40,10 +42,6 @@ io.on("connection", (socket) => {
     })
 
     
-    socket.on("updatePlayerCount", () => {
-        playercount++
-        io.emit("updatePlayerCount", playerCount);
-    })
 
     socket.on("disconnect", () => {
         console.log("Player disconnected");

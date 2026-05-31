@@ -1,0 +1,22 @@
+#gamebox{
+display:grid;
+grid-template-columns:100px 100px 100px;
+grid-template-rows:100px 100px 100px;
+gap:3px 3px;
+height:400px;
+width:400px;
+}
+
+
+
+
+.boxes{
+    width:100px;
+    height:100px;
+    background-color: green;
+    transition:all 0.3s ease-in
+}
+
+.boxes:hover{
+    background-color:greenyellow;
+}
