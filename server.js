@@ -17,7 +17,7 @@ let playercount = 0;
 io.on("connection", (socket) => {
 
     console.log("Player connected");
-    //console.log(socket.handshake.auth.player_data)
+    console.log(socket.handshake.auth.playerData.id)
     playercount++;
     // Send current count to new player
     socket.emit("updateCount", count);
@@ -44,11 +44,13 @@ io.on("connection", (socket) => {
     
 
     socket.on("disconnect", () => {
+        playercount--
         console.log("Player disconnected");
     });
 
 });
 
 server.listen(3000, () => {
+  
     console.log("Server running on port 3000");
 });
