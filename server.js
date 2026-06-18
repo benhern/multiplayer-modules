@@ -33,7 +33,7 @@ io.on("connection", (socket) => {
     socket.on("namebox", (name) => {
         console.log(name);
     })
-    
+    ll
    
     socket.on("disconnect", () => {
         console.log("Player disconnected");
