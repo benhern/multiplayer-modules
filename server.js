@@ -1,5 +1,7 @@
 import express from "express";
+import { read } from "fs";
 import http from "http";
+import { builtinModules } from "module";
 import { Server } from "socket.io";
 
 const app = express();
@@ -11,42 +13,25 @@ const io = new Server(server);
 app.use(express.static("public"));
 
 let count = 0;
+let colors = ["red","blue"]
 
-let playercount = 0;
+let game_data = {
+    id: "",
+    turn: 0,
+    win: 0,
+    piece: "*"
+}
 
 io.on("connection", (socket) => {
 
     console.log("Player connected");
-    console.log(socket.handshake.auth.playerData.id)
-    playercount++;
-    // Send current count to new player
-    socket.emit("updateCount", count);
-    socket.emit("updatePlayerCount", playercount);
-
-    // When player clicks increase button
-    socket.on("increaseCount", () => {
-
-        count++;
-
-        // Send updated count to all players
-        io.emit("updateCount", count);
-
-    });
-
-    // When player clicks decrease button
-    //Listens for click from client.js
-    socket.on("decreaseCount", () => {
-        count--;
-//Sends message to update the count for the client.js
-        io.emit("updateCount", count);
-    })
-
-    
+   
 
     socket.on("disconnect", () => {
-        playercount--
+        players.delete(playerID)
         console.log("Player disconnected");
     });
+
 
 });
 
@@ -54,3 +39,6 @@ server.listen(3000, () => {
   
     console.log("Server running on port 3000");
 });
+
+
+https://prod.liveshare.vsengsaas.visualstudio.com/join?923B3A28CCF231201D8D34D30CC6944408D4
