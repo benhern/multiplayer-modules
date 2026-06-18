@@ -14,6 +14,7 @@ app.use(express.static("public"));
 
 let count = 0;
 let colors = ["red","blue"]
+let players = new Set()
 
 let game_data = {
     id: "",
@@ -24,14 +25,19 @@ let game_data = {
 
 io.on("connection", (socket) => {
 
-    console.log("Player connected");
-   
+    
+    socket.on("player_id", (player) => {
+        console.log(`Player connected: ${player}`);
+    })
 
+    socket.on("namebox", (name) => {
+        console.log(name);
+    })
+    
+   
     socket.on("disconnect", () => {
-        players.delete(playerID)
         console.log("Player disconnected");
     });
-
 
 });
 
@@ -39,6 +45,3 @@ server.listen(3000, () => {
   
     console.log("Server running on port 3000");
 });
-
-
-https://prod.liveshare.vsengsaas.visualstudio.com/join?923B3A28CCF231201D8D34D30CC6944408D4

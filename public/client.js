@@ -1,32 +1,35 @@
-const countText = document.getElementById("count");
-const button = document.getElementById("button");
-const button2 = document.getElementById("button2")
-const playercountText = document.getElementById("playercount")
 const gamebox = document.getElementById("gamebox")
+const submit_name = document.getElementById("submit-name")
 
+let player = sessionStorage.getItem("player_id")
 
-let player = sessionStorage.getItem("playerData")
-
-if(player){
-playerData = JSON.parse(player)
-}
-else{
-let player_id = crypto.randomUUID()
-sessionStorage.setItem("playerData",JSON.stringify(player_id))
+if(!player)
+{
+player = crypto.randomUUID()
+sessionStorage.setItem("player_id",JSON.stringify(player))
 }
 
-const socket = io();
+const socket = io()
+
+submit_name.addEventListener("click", ()=>{
+    const name = document.getElementById("namebox")
+    socket.emit("namebox", name.value)
+})
+
+socket.emit("player_id", player)
 
 
 
 
-for(let i = 0; i<9; i++){
-    const box = document.createElement("div")
+
+
+// for(let i = 0; i<9; i++){
+//     const box = document.createElement("div")
     
-    box.className = "boxes"
+//     box.className = "boxes"
 
-    gamebox.appendChild(box)
-}
+//     gamebox.appendChild(box)
+// }
 
 
 
