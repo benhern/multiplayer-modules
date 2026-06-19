@@ -6,7 +6,7 @@ let player = sessionStorage.getItem("player_id")
 if(!player)
 {
 player = crypto.randomUUID()
-sessionStorage.setItem("player_id",JSON.stringify(player))
+sessionStorage.setItem("player_id", player)
 }
 
 const socket = io()
@@ -30,7 +30,6 @@ socket.emit("player_id", player)
 
 //     gamebox.appendChild(box)
 // }
-
 
 
 
