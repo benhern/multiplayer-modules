@@ -10,7 +10,7 @@ input{
 
 
 #gamebox{
-display:grid;
+display: none;
 grid-template-columns:100px 100px 100px;
 grid-template-rows:100px 100px 100px;
 gap:3px 3px;

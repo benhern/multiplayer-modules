@@ -30,6 +30,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on("namebox", (name) => {
+        console.log(playersBySocket)
 
         //Checking to see if we are renaming socket
         const trimmedName = name.trim();
@@ -44,6 +45,12 @@ io.on("connection", (socket) => {
         game_data.players.add(trimmedName);
         playersBySocket.set(socket.id, trimmedName);
         console.log(game_data.players);
+
+
+            if(players.size===2){
+                const username = playersBySocket.get(socket.id)
+    socket.emit("Two players are connected", username)
+    }
     });
    
     socket.on("disconnect", () => {
@@ -60,6 +67,7 @@ io.on("connection", (socket) => {
         console.log(`Player disconnected: ${player ?? socket.id}`);
         console.log(game_data.players);
     });
+
 
 });
 
