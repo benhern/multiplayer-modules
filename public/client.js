@@ -35,9 +35,3 @@ socket.on("Two players are connected", (player_name) => {
   
 }
 })
-
-
-
-
-
-//  gamebox.style.display = "grid"

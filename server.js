@@ -49,7 +49,8 @@ io.on("connection", (socket) => {
 
             if(players.size===2){
                 const username = playersBySocket.get(socket.id)
-    socket.emit("Two players are connected", username)
+                // IO sends to every socket including the one that sent the request
+    io.emit("Two players are connected", username)
     }
     });
    
