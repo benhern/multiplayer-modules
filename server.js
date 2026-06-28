@@ -11,15 +11,14 @@ const io = new Server(server);
 app.use(express.static("public"));
 
 let count = 0;
-let colors = ["red", "blue"];
+// let colors = ["red", "blue"];
 let players = new Set();
 let playersBySocket = new Map();
 
 let game_data = {
     players: players,
     turn: 0,
-    win: 0,
-    piece: "*"
+    color: "red"
 };
 
 io.on("connection", (socket) => {
@@ -27,6 +26,12 @@ io.on("connection", (socket) => {
     socket.on("player_id", (player) => {
         console.log(`Player connected: ${player}`);
         playersBySocket.set(socket.id, player);
+        socket.emit("initial_data", game_data)
+
+
+
+
+
     });
 
     socket.on("namebox", (name) => {
