@@ -16,6 +16,8 @@ const socket = io()
 
 socket.on("initial_data", (data) => {
 sessionStorage.setItem("turn", data.turn)
+sessionStorage.setItem("color", data.color)
+console.log(data)
 })
 
 submit_name.addEventListener("click", ()=>{
@@ -37,8 +39,14 @@ socket.on("Two players are connected", (player_name) => {
     namebox.style.display="none"
     let username = sessionStorage.getItem("player_name")
     name.innerHTML = `Player Name: ${username}`
+    
+    socket.on("message", (message)=>{
+        name.innerHTML = `Player Name: ${username} <p> You should ${message}</p>`
+    })
+    
 
 })
+
 
 
 function createBoxes() {
@@ -60,9 +68,16 @@ return boxes;
 
 function changeColor(event){
     let box = event.currentTarget;
-    const client_turn = sessionStorage("turn")
+    const client_turn = sessionStorage.getItem("turn")
+    socket.emit("turn", client_turn)
+
+    socket.once("message", (data)=>{
+        let client_color = sessionStorage.getItem("color")
+        box.style.backgroundColor = client_color;
+
+
+    })
     
-    box.style.backgroundColor = "red"
 }
 
 

@@ -27,12 +27,26 @@ io.on("connection", (socket) => {
         console.log(`Player connected: ${player}`);
         playersBySocket.set(socket.id, player);
         socket.emit("initial_data", game_data)
-
-
-
-
+        game_data.turn = 1;
+        game_data.color = "black";
 
     });
+
+
+socket.on("turn", (client_turn) => {
+    let message = ""
+    client_turn = Number(client_turn)
+    if(client_turn===0){
+        message = "not go."
+    }
+    else{
+        message = "go!"
+        }
+
+        console.log(`${playersBySocket.get(socket.id)} ${message}`)
+socket.emit("message", message)
+    })
+
 
     socket.on("namebox", (name) => {
         console.log(playersBySocket)
