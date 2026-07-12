@@ -17,7 +17,7 @@ let playersBySocket = new Map();
 
 let game_data = {
     players: players,
-    turn: 0,
+    turn: 1,
     color: "red"
 };
 
@@ -25,26 +25,30 @@ io.on("connection", (socket) => {
 
     socket.on("player_id", (player) => {
         console.log(`Player connected: ${player}`);
+    
         playersBySocket.set(socket.id, player);
-        socket.emit("initial_data", game_data)
-        game_data.turn = 1;
+        const player_turn = playersBySocket.size
+        
+        socket.emit("initial_data", {...game_data, 
+        playerTurn: player_turn})
         game_data.color = "black";
 
     });
 
 
-socket.on("turn", (client_turn) => {
-    let message = ""
-    client_turn = Number(client_turn)
-    if(client_turn===0){
-        message = "not go."
-    }
-    else{
-        message = "go!"
-        }
+    socket.on("Update_Turn", (current_turn) => {
 
-        console.log(`${playersBySocket.get(socket.id)} ${message}`)
-socket.emit("message", message)
+        current_turn = Number(current_turn)
+
+        if(current_turn===1){
+            current_turn++
+        }
+        else if (current_turn == 2){
+            current_turn--
+        }
+        console.log("Updating")
+        game_data.turn = current_turn
+        io.emit("New_Turn", current_turn)
     })
 
 

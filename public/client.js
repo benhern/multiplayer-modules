@@ -7,8 +7,8 @@ let player = sessionStorage.getItem("player_id")
 
 if(!player)
 {
-player = crypto.randomUUID()
-sessionStorage.setItem("player_id", player)
+    player = crypto.randomUUID()
+    sessionStorage.setItem("player_id", player)
 }
 
 const socket = io()
@@ -17,6 +17,7 @@ const socket = io()
 socket.on("initial_data", (data) => {
 sessionStorage.setItem("turn", data.turn)
 sessionStorage.setItem("color", data.color)
+sessionStorage.setItem("player_turn", data.playerTurn)
 console.log(data)
 })
 
@@ -33,8 +34,20 @@ socket.on("Two players are connected", (player_name) => {
    
     let box_list = createBoxes()
     box_list.forEach((box,index) => {
+        
         box.addEventListener("click", changeColor)
     })
+
+
+socket.on("New_Turn", (current_turn)=>{
+    console.log(current_turn)
+    sessionStorage.setItem("turn", current_turn)
+
+})
+
+
+
+
 
     namebox.style.display="none"
     let username = sessionStorage.getItem("player_name")
@@ -61,25 +74,27 @@ function createBoxes() {
     gamebox.appendChild(box)
 }
 
-let boxes = document.querySelectorAll(".boxes")
+let boxes = document.querySelectorAll(".boxes");
 
 return boxes;
 }
 
 function changeColor(event){
     let box = event.currentTarget;
-    const client_turn = sessionStorage.getItem("turn")
-    socket.emit("turn", client_turn)
+    const client_turn = Number(sessionStorage.getItem("turn"));
+    const client_color = sessionStorage.getItem("color");
+    const current_turn = Number(sessionStorage.getItem("player_turn"));
 
-    socket.once("message", (data)=>{
-        let client_color = sessionStorage.getItem("color")
+    console.log(client_turn)
+    console.log(current_turn)
+
+    if(client_turn === current_turn){
         box.style.backgroundColor = client_color;
-
-
-    })
-    
+        box.removeEventListener("click", changeColor)
+        socket.emit("Update_Turn", current_turn)
+        console.log(`Player ${current_turn} can go. It is ${client_color}'s turn.`)
+    }
+    else{
+        console.log("It is not your turn.")
+    }
 }
-
-
-
-
