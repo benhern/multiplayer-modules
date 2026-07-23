@@ -7,7 +7,7 @@ let player = sessionStorage.getItem("player_id")
 
 if(!player)
 {
-    player = crypto.randomUUID()
+    player = createPLayerId()
     sessionStorage.setItem("player_id", player)
 }
 
@@ -97,4 +97,11 @@ function changeColor(event){
     else{
         console.log("It is not your turn.")
     }
+}
+
+function createPLayerId(){
+    if(globalThis.crypto?.randomUUID){
+        return globalThis.crypto.randomUUID()
+    }
+    return `player ${Date.now()}-${Math.random().toString(16).slice(2)}`
 }

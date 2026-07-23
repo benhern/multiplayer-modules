@@ -1,5 +1,7 @@
 import express from "express";
 import http from "http";
+import os from "os"
+import { networkInterfaces } from "os";
 import { Server } from "socket.io";
 
 const app = express();
@@ -7,6 +9,8 @@ const app = express();
 const server = http.createServer(app);
 
 const io = new Server(server);
+
+const PORT = process.env.PORT || 3000
 
 app.use(express.static("public"));
 
@@ -70,9 +74,9 @@ io.on("connection", (socket) => {
         console.log(game_data.players);
 
 
-            if(players.size===2){
-                const username = playersBySocket.get(socket.id)
-                // IO sends to every socket including the one that sent the request
+        if(players.size===2){
+            const username = playersBySocket.get(socket.id)
+    // IO sends to every socket including the one that sent the request
     io.emit("Two players are connected", username)
     }
     });
@@ -92,10 +96,37 @@ io.on("connection", (socket) => {
         console.log(game_data.players);
     });
 
+    server.on("error", (error)=>{
+        if(error.code === "EADDRINUSE"){
+            console.error(`Port ${port} is already in use`)
+            console.error("Stop the other server or run this app on a different port")
+            process.exit(1)
+        }
+        throw error
+    })
+
+
 
 });
 
-server.listen(3000, () => {
-  
+server.listen(PORT, () => {
+
     console.log("Server running on port 3000");
+    for (const url of getLocalNetworkUrls(PORT)){
+        console.log(`Server available on your network ${url}`)
+    }
 });
+
+
+function getLocalNetworkUrls(port) {
+    const interfaces = os.networkInterfaces();
+    const urls = []
+    for (const networkInterfaces of Object.values(interfaces)){
+        for(const address of networkInterfaces ?? []){
+            if(address.family === "IPv4" && !address.internal){
+                urls.push(`http://${address.address}:${port}`)
+            }
+        }
+    }
+    return urls
+}
