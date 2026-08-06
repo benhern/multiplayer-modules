@@ -6,7 +6,7 @@ const namebox = document.getElementById("namebox");
 let player = sessionStorage.getItem("player_id");
 
 if (!player) {
-  player = createPLayerId();
+  player = createPlayerId();
   sessionStorage.setItem("player_id", player);
 }
 
@@ -31,8 +31,10 @@ socket.on("Two players are connected", (player_name) => {
   console.log("Two players are connected");
 
   let box_list = createBoxes();
-  box_list.forEach((box, index) => {
-    box.addEventListener("click", changeColor);
+  box_list.forEach((box, box_index) => {
+    box.addEventListener("click", (e) => {
+      changeColor(e, box_index);
+    });
   });
 
   socket.on("New_Turn", (current_turn) => {
@@ -44,8 +46,8 @@ socket.on("Two players are connected", (player_name) => {
   let username = sessionStorage.getItem("player_name");
   name.innerHTML = `Player Name: ${username}`;
 
-  socket.on("message", (message) => {
-    name.innerHTML = `Player Name: ${username} <p> You should ${message}</p>`;
+  socket.on("notyourturn", (turn) => {
+    sessionStorage.setItem("turn", turn);
   });
 });
 
@@ -66,7 +68,7 @@ function createBoxes() {
   return boxes;
 }
 
-function changeColor(event) {
+function changeColor(event, box_index) {
   let box = event.currentTarget;
   const client_turn = Number(sessionStorage.getItem("turn"));
   const client_color = sessionStorage.getItem("color");
@@ -75,17 +77,21 @@ function changeColor(event) {
   console.log(client_turn);
   console.log(current_turn);
 
+  if (box.dataset.filled === "true") {
+    return;
+  }
+
   if (client_turn === current_turn) {
-    box.style.backgroundColor = client_color;
-    box.removeEventListener("click", changeColor);
-    socket.emit("Update_Turn", current_turn);
+    box.classList.remove("disable-box");
+    socket.emit("Update_Turn", box_index, client_color);
     console.log(`Player ${current_turn} can go. It is ${client_color}'s turn.`);
   } else {
     console.log("It is not your turn.");
+    box.classList.add("disable-box");
   }
 }
 
-function createPLayerId() {
+function createPlayerId() {
   if (globalThis.crypto?.randomUUID) {
     return globalThis.crypto.randomUUID();
   }

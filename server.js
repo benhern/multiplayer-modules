@@ -23,7 +23,19 @@ let game_data = {
   players: players,
   turn: 1,
   color: "red",
+  board: Array(9).fill(null),
 };
+
+const wins = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  [0, 4, 8],
+  [2, 4, 6],
+];
 
 io.on("connection", (socket) => {
   socket.on("player_id", (player) => {
@@ -36,17 +48,22 @@ io.on("connection", (socket) => {
     game_data.color = "black";
   });
 
-  socket.on("Update_Turn", (current_turn) => {
-    current_turn = Number(current_turn);
-
-    if (current_turn === 1) {
-      current_turn++;
-    } else if (current_turn == 2) {
-      current_turn--;
+  socket.on("Update_Turn", (box_index, client_color) => {
+    const player_data = playersBySocket.get(socket.id);
+    if (game_data.turn !== player_data.turn) {
+      socket.emit("notyourturn", game_data.turn);
     }
-    console.log("Updating");
-    game_data.turn = current_turn;
-    io.emit("New_Turn", current_turn);
+
+    box_index = Number(box_index);
+    game_data.color = client_color;
+    game_data.board[box_index] = client_color;
+
+    if (game_data.turn === 0) {
+      game_data.turn = 1;
+    } else (game_data.turn === 1)
+    {
+      game_data.turn = 0;
+    }
   });
 
   socket.on("namebox", (name) => {
