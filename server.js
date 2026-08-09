@@ -19,6 +19,7 @@ let count = 0;
 let players = new Set();
 let playersBySocket = new Map();
 
+let colors = ["black", "red"]
 let game_data = {
   players: players,
   turn: 1,
@@ -39,61 +40,64 @@ const wins = [
 
 io.on("connection", (socket) => {
   socket.on("player_id", (player) => {
-    console.log(`Player connected: ${player}`);
+    // console.log(`Player connected: ${player}`);
+const player_turn = playersBySocket.size +1
+const player_data = {
+  id: player,
+  name: player,
+  turn: player_turn,
+  color: colors[player_turn -1]
+}
 
-    playersBySocket.set(socket.id, player);
-    const player_turn = playersBySocket.size;
+playersBySocket.set(socket.id,player_data)
 
-    socket.emit("initial_data", { ...game_data, playerTurn: player_turn });
-    game_data.color = "black";
-  });
-
-  socket.on("Update_Turn", (box_index, client_color) => {
-    const player_data = playersBySocket.get(socket.id);
-    if (!player_data || game_data.turn !== game_data.turn) {
-      socket.emit("notyourturn", game_data.turn);
-    }
-
-    box_index = Number(box_index);
-    game_data.color = client_color;
-    game_data.board[box_index] = client_color;
-
-    if (game_data.turn === 1) {
-      game_data.turn = 2;
-    } else (game_data.turn === 2)
-    {
-      game_data.turn = 1;
-    }
+socket.emit("initial_data", {
+  turn: game_data.turn,
+  player_turn: player_data.turn,
+  color: player_data.color
+})
 
 
-    io.emit("Update Boxes", box_index, player_data.color, game_data.turn);
 
 
   });
 
-  socket.on("namebox", (name) => {
-    console.log(playersBySocket);
+socket.on("Update_Turn", (box_index) => {
+  const player_data = playersBySocket.get(socket.id);
 
-    //Checking to see if we are renaming socket
-    const trimmedName = name.trim();
-    const previousPlayer = playersBySocket.get(socket.id);
+  if (!player_data || player_data.turn !== game_data.turn) {
+    socket.emit("notyourturn", game_data.turn);
+    return;
+  }
 
-    //If we are then delete player and socket
-    if (previousPlayer) {
-      game_data.players.delete(previousPlayer);
-    }
+  box_index = Number(box_index);
 
-    //Add in the new name and the new socket
-    game_data.players.add(trimmedName);
-    playersBySocket.set(socket.id, trimmedName);
-    console.log(game_data.players);
+  if (game_data.board[box_index] !== null) return;
 
-    if (players.size === 2) {
-      const username = playersBySocket.get(socket.id);
-      // IO sends to every socket including the one that sent the request
-      io.emit("Two players are connected", username);
-    }
-  });
+  game_data.board[box_index] = player_data.color;
+  game_data.turn = game_data.turn === 1 ? 2 : 1;
+
+  io.emit(
+    "Update_Boxes",
+    box_index,
+    player_data.color,
+    game_data.turn,
+  );
+});
+
+socket.on("namebox", (name) => {
+  const trimmedName = name.trim();
+  const player_data = playersBySocket.get(socket.id);
+
+  if (!player_data) return;
+
+  player_data.name = trimmedName;
+  game_data.players.add(player_data);
+
+  if (game_data.players.size === 2) {
+    io.emit("Two players are connected");
+  }
+});
 
   socket.on("disconnect", () => {
     //Grabs the current socket leaving
@@ -140,7 +144,3 @@ function getLocalNetworkUrls(port) {
   }
   return urls;
 }
-
-
-
-https://prod.liveshare.vsengsaas.visualstudio.com/join?A72FA62E3BB851F178FA5592461D67147F94

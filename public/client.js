@@ -15,7 +15,7 @@ const socket = io();
 socket.on("initial_data", (data) => {
   sessionStorage.setItem("turn", data.turn);
   sessionStorage.setItem("color", data.color);
-  sessionStorage.setItem("player_turn", data.playerTurn);
+  sessionStorage.setItem("player_turn", data.player_turn);
   console.log(data);
 });
 
@@ -41,13 +41,19 @@ socket.on("Two players are connected", (player_name) => {
   let username = sessionStorage.getItem("player_name");
   name.innerHTML = `Player Name: ${username}`;
 
-socket.on("Update Boxes", (box_index, client_color, current_turn) => {
-sessionStorage.setItem("turn", current_turn)
-box_index = Number(box_index)
-box_list[box_index].style.backgroundColor = client_color
-box_list[box_index].dataset.filled = (true)
-})
+socket.on("Update_Boxes", (box_index, client_color, current_turn) => {
+  sessionStorage.setItem("turn", current_turn);
 
+  box_index = Number(box_index);
+  box_list[box_index].style.backgroundColor = client_color;
+  box_list[box_index].dataset.filled = "true";
+
+  box_list.forEach((box) => {
+    if (box.dataset.filled !== "true") {
+      box.classList.remove("disable-box");
+    }
+  });
+});
 
   socket.on("notyourturn", (turn) => {
     sessionStorage.setItem("turn", turn);
@@ -86,7 +92,7 @@ function changeColor(event, box_index) {
 
   if (client_turn === current_turn) {
     box.classList.remove("disable-box");
-    socket.emit("Update_Turn", box_index, client_color);
+    socket.emit("Update_Turn", box_index);
     console.log(`Player ${current_turn} can go. It is ${client_color}'s turn.`);
   } else {
     console.log("It is not your turn.");
