@@ -50,7 +50,7 @@ io.on("connection", (socket) => {
 
   socket.on("Update_Turn", (box_index, client_color) => {
     const player_data = playersBySocket.get(socket.id);
-    if (game_data.turn !== player_data.turn) {
+    if (!player_data || game_data.turn !== game_data.turn) {
       socket.emit("notyourturn", game_data.turn);
     }
 
@@ -58,12 +58,17 @@ io.on("connection", (socket) => {
     game_data.color = client_color;
     game_data.board[box_index] = client_color;
 
-    if (game_data.turn === 0) {
-      game_data.turn = 1;
-    } else (game_data.turn === 1)
+    if (game_data.turn === 1) {
+      game_data.turn = 2;
+    } else (game_data.turn === 2)
     {
-      game_data.turn = 0;
+      game_data.turn = 1;
     }
+
+
+    io.emit("Update Boxes", box_index, player_data.color, game_data.turn);
+
+
   });
 
   socket.on("namebox", (name) => {
@@ -135,3 +140,7 @@ function getLocalNetworkUrls(port) {
   }
   return urls;
 }
+
+
+
+https://prod.liveshare.vsengsaas.visualstudio.com/join?A72FA62E3BB851F178FA5592461D67147F94

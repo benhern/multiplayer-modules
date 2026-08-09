@@ -37,14 +37,17 @@ socket.on("Two players are connected", (player_name) => {
     });
   });
 
-  socket.on("New_Turn", (current_turn) => {
-    console.log(current_turn);
-    sessionStorage.setItem("turn", current_turn);
-  });
-
   namebox.style.display = "none";
   let username = sessionStorage.getItem("player_name");
   name.innerHTML = `Player Name: ${username}`;
+
+socket.on("Update Boxes", (box_index, client_color, current_turn) => {
+sessionStorage.setItem("turn", current_turn)
+box_index = Number(box_index)
+box_list[box_index].style.backgroundColor = client_color
+box_list[box_index].dataset.filled = (true)
+})
+
 
   socket.on("notyourturn", (turn) => {
     sessionStorage.setItem("turn", turn);
@@ -70,9 +73,9 @@ function createBoxes() {
 
 function changeColor(event, box_index) {
   let box = event.currentTarget;
-  const client_turn = Number(sessionStorage.getItem("turn"));
+  const client_turn = Number(sessionStorage.getItem("player_turn"));
   const client_color = sessionStorage.getItem("color");
-  const current_turn = Number(sessionStorage.getItem("player_turn"));
+  const current_turn = Number(sessionStorage.getItem("turn"));
 
   console.log(client_turn);
   console.log(current_turn);
