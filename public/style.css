@@ -1,53 +1,93 @@
-
-*{
-    margin:0;
-    padding:0;
+* {
+  margin: 0;
+  padding: 0;
 }
 
-input{
-    width: fit-content;
+input {
+  width: fit-content;
 }
 
-
-#gamebox{
-display: none;
-grid-template-columns:100px 100px 100px;
-grid-template-rows:100px 100px 100px;
-gap:3px 3px;
-height:400px;
-width:400px;
+body {
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
 }
 
-.boxes{
-    width:100px;
-    height:100px;
-    background-color: green;
-    transition:all 0.3s ease-in
+#gamebox {
+  display: none;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
+  gap: 3px;
+  height: min(400px, 100vw);
+  width: min(400px, 100vw);
+  justify-content: center;
+  align-content: center;
 }
 
-.boxes:hover{
-    background-color:greenyellow;
+.boxes {
+  width: 100px;
+  height: 100px;
+  background-color: green;
+  transition: all 0.3s ease-in;
 }
 
-#namebox{
-    border-radius: 10px;
-    text-align: center;
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+  75% {
+    transform: translateX(-4px);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 
-#start-menu{
-    display: flex;
-    flex-direction: column;
-    width:200px;
-    gap:5px;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    width: 100vw;
+.shake {
+  animation: shake 0.25s ease-in-out;
 }
 
-input[type="button"]{
-background-color:rgb(0, 219, 0);
-border-radius: 7px;
-width:60px;
-height:25px;
+#namebox {
+  display: flex;
+  border-radius: 10px;
+  text-align: center;
+}
+
+#start-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+
+}
+
+#name {
+  width: min(400px, 100vw);
+  text-align: center;
+}
+
+input[type="button"] {
+  background-color: rgb(0, 219, 0);
+  border-radius: 7px;
+  width: fit-content;
+  padding: 0 10px;
+  height: 25px;
+}
+
+#new-game {
+  display: none;
+}
+
+.disable-box {
+  pointer-events: none; /* Blocks all clicks and hover effects */
+  user-select: none; /* Prevents highlighting text inside */
 }
