@@ -27,7 +27,7 @@ submit_name.addEventListener("click", () => {
 
 socket.emit("player_id", player);
 
-socket.on("Two players are connected", (player_name) => {
+socket.on("Two players are connected", (current_player_name) => {
   console.log("Two players are connected");
 
   let box_list = createBoxes();
@@ -38,22 +38,22 @@ socket.on("Two players are connected", (player_name) => {
   });
 
   namebox.style.display = "none";
-  let username = sessionStorage.getItem("player_name");
-  name.innerHTML = `Player Name: ${username}`;
+  name.textContent = `It is ${current_player_name}'s turn`;
 
-socket.on("Update_Boxes", (box_index, client_color, current_turn) => {
-  sessionStorage.setItem("turn", current_turn);
+  socket.on("Update_Boxes", (box_index, client_color, current_turn, current_player_name) => {
+    name.textContent = `It is ${current_player_name}'s turn`;
+    sessionStorage.setItem("turn", current_turn);
 
-  box_index = Number(box_index);
-  box_list[box_index].style.backgroundColor = client_color;
-  box_list[box_index].dataset.filled = "true";
+    box_index = Number(box_index);
+    box_list[box_index].style.backgroundColor = client_color;
+    box_list[box_index].dataset.filled = "true";
 
-  box_list.forEach((box) => {
-    if (box.dataset.filled !== "true") {
-      box.classList.remove("disable-box");
-    }
+    box_list.forEach((box) => {
+      if (box.dataset.filled !== "true") {
+        box.classList.remove("disable-box");
+      }
+    });
   });
-});
 
   socket.on("notyourturn", (turn) => {
     sessionStorage.setItem("turn", turn);

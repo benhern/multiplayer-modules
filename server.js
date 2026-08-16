@@ -26,7 +26,7 @@ let game_data = {
   color: "red",
   board: Array(9).fill(null),
 };
-
+const moves = []
 const wins = [
   [0, 1, 2],
   [3, 4, 5],
@@ -76,12 +76,19 @@ socket.on("Update_Turn", (box_index) => {
 
   game_data.board[box_index] = player_data.color;
   game_data.turn = game_data.turn === 1 ? 2 : 1;
+  const currentPlayer = [...playersBySocket.values()].find(
+    (player) => player.turn === game_data.turn,
+  );
 
+
+  moves.push(box_index)
+console.log(moves)
   io.emit(
     "Update_Boxes",
     box_index,
     player_data.color,
     game_data.turn,
+    currentPlayer?.name,
   );
 });
 
@@ -95,7 +102,10 @@ socket.on("namebox", (name) => {
   game_data.players.add(player_data);
 
   if (game_data.players.size === 2) {
-    io.emit("Two players are connected");
+    const currentPlayer = [...playersBySocket.values()].find(
+      (player) => player.turn === game_data.turn,
+    );
+    io.emit("Two players are connected", currentPlayer?.name);
   }
 });
 
@@ -131,6 +141,24 @@ server.listen(PORT, () => {
     console.log(`Server available on your network ${url}`);
   }
 });
+
+
+
+function checkWin(){
+if (moves.length < 3){
+  return
+}
+
+
+
+
+
+
+} 
+
+
+
+
 
 function getLocalNetworkUrls(port) {
   const interfaces = os.networkInterfaces();
